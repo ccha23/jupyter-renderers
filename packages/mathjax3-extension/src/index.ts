@@ -31,6 +31,15 @@ mathjax.handlers.register(SafeHandler(new HTMLHandler(browserAdaptor())));
 class emptyFont extends TeXFont {}
 (emptyFont as any).defaultFonts = {};
 
+// load physics
+import 'mathjax-full/js/input/tex/physics/PhysicsConfiguration.js';
+declare const MathJax: any;
+if (typeof MathJax !== 'undefined' && MathJax.loader) {
+  MathJax.loader.preLoad(
+    '[tex]/physics',
+  );
+}
+
 /**
  * The MathJax 3 Typesetter.
  */
@@ -40,7 +49,7 @@ export class MathJax3Typesetter implements ILatexTypesetter {
       font: new emptyFont(),
     });
     const tex = new TeX({
-      packages: AllPackages,
+      packages: AllPackages.concat(['physics']),
       inlineMath: [
         ['$', '$'],
         ['\\(', '\\)'],
@@ -49,6 +58,19 @@ export class MathJax3Typesetter implements ILatexTypesetter {
         ['$$', '$$'],
         ['\\[', '\\]'],
       ],
+      macros: {
+          mc: ["\\mathcal{#1}", 1],
+          rsfs: ["\\mathsc{#1}", 1],
+          R: ["\\mathsf{#1}", 1],
+          M: ["\\boldsymbol{#1}", 1],
+          RM: ["\\R{\\M{#1}}", 1]
+      },
+      // mathtools: {
+      //     pairedDelimiters: {
+      //         abs: ['\\lvert', '\\rvert'],
+      //         Set: ['\\\{', '\\\}']
+      //     }
+      // },
       processEscapes: true,
       processEnvironments: true,
     });
